@@ -21,14 +21,7 @@ New to Dandelion? Jump to the :ref:`dandelion-basics` page for more info.
    :maxdepth: 3
    :caption: Advanced Docs:
 
-   Advanced-Usage/Manager/index
-   Advanced-Usage/Workloads/index
-   Advanced-Usage/FireMarshal/index
-   Advanced-Usage/Generating-Different-Targets.rst
    Advanced-Usage/Debugging/index
-   Developing-New-Devices/index
-   Advanced-Usage/Supernode.rst
-   Advanced-Usage/Miscellaneous-Tips.rst
    Advanced-Usage/FAQs.rst
 
 Indices and tables
