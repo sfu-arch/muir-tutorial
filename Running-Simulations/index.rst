@@ -1,6 +1,6 @@
 .. _running_simulations:
 
-Running FireSim Simulations
+Running Dandelion Simulations
 ================================
 
 These guides will walk you through running two kinds of simulations:
@@ -15,8 +15,8 @@ Hit next to get started!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Running FireSim Simulations:
+   :caption: Running Dandelion Simulations:
 
-   Running-a-Single-Node-Simulation
-   Running-a-Cluster-Simulation
+   Running-a-verilator
+   Running-a-vcs
 
