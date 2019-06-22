@@ -21,6 +21,7 @@ New to Dandelion? Jump to the :ref:`dandelion-basics` page for more info.
    :maxdepth: 3
    :caption: Advanced Docs:
 
+   Advanced-Usage/Scala/index
    Advanced-Usage/Debugging/index
    Advanced-Usage/FAQs.rst
 
