@@ -118,9 +118,9 @@ In this example, we have a funciton with on eparameter, the compiler picks `Func
 
 * *Contravariant* in the **input** type `A` (marked with `-`) where `A` can be replaced with the derived type. (more general input argument)
 
-  * *Covariant* in the **output** type `B` (marked with `+`) where `B` can be replaced with the base type. (more specific return type)
+* *Covariant* in the **output** type `B` (marked with `+`) where `B` can be replaced with the base type. (more specific return type)
 
-  Following this rule:
+Following this rule:
 
     "Be conservative in what you do, be liberal in what you accept from others" -- robustness principle
 

@@ -23,6 +23,7 @@ New to Dandelion? Jump to the :ref:`dandelion-basics` page for more info.
 
    Advanced-Usage/Scala/index
    Advanced-Usage/Debugging/index
+   Advanced-Usage/FPGABoards/index
    Advanced-Usage/FAQs.rst
 
 Indices and tables
