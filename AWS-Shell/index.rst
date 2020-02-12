@@ -21,7 +21,7 @@ The same steps for running the cl_hello_world can be applied to cl_dram_dma exam
 
 But before explaining each of these example, I first go trought the steps that are needed to set up and run EC2 F1 instances. This guide is divided into two parts:
 
-1. setting up and synthesizing the examples in HDL with Xilinx Vivado
+1. Setting up and synthesizing the examples in HDL with Xilinx Vivado
 2. Running the example on an Amazon EC2 F1 instance.
 
 
@@ -31,7 +31,8 @@ But before explaining each of these example, I first go trought the steps that a
    :caption: AWS CL examples:
 
    AWS-setup-account 
-   Synthesize-Example
    hello_world/CL-Hello-World
    cl_dram_dma/CL-DRAM-DMA
+   Synthesize-Example
+   Appendix
 
