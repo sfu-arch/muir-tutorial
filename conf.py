@@ -23,8 +23,8 @@ import os
 # -- Project information -----------------------------------------------------
 
 project = u'Dandelion'
-copyright = u'2019, Amirali Sharifian, Arrvindh Shriraman and SFU Architecture Research'
-author = u'Amirali Sharifian, Arrvindh Shriraman and SFU Architecture Research'
+copyright = u'2019, Amirali Sharifian, SFU Architecture Research'
+author = u'Amirali Sharifian, SFU Architecture Research'
 
 # The short X.Y version
 version = u''

@@ -1,7 +1,7 @@
-.. _hello-world-aws:
+.. _cl_hello_world:
 
-Running a VCS
-===============================
+Custom Logic Hello World Example
+=================================
 
 This is an exmpale file for sphinx
 
