@@ -16,6 +16,7 @@ New to Dandelion? Jump to the :ref:`dandelion-basics` page for more info.
    Dandelion-Basics
    Initial-Setup/index
    Running-Simulations/index
+   AWS-Shell/index
 
 .. toctree::
    :maxdepth: 3
