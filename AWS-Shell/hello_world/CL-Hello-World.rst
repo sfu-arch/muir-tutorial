@@ -10,7 +10,7 @@ The “Hello World” example exercises the :ref:`OCL <ocl>` Shell-to-CL AXI-Lit
 .. contents:: Table of Contents
     :local:
 
-Custol Logic RTL
+Custom Logic RTL
 -----------------
 
 This simple *hello_world* example builds a Custom Logic (CL) that will enable the instance to "peek" and "poke" registers in the Custom Logic (CL).

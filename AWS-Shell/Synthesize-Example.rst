@@ -302,3 +302,18 @@ Congratulations! You have successfully run your first examples on the EC2 F1!
 Running the cl_dram_dma example
 --------------------------------
 
+To run the cl_dram_dma example, follow the same steps describe above to synthesize the HDL, upload the tarball to s3, switch to F1 instance, and program the FPGA.
+``cd`` into the cl_dram_dma example directory and try running it.
+
+.. code-block:: bash
+
+    cd $CL_DIR/software/runtime/(CL_DIR is hdk/cl/examples/cl_dram_dma)
+    make all
+    sudo ./test_dram_dma
+
+
+If you are running the dma example for the first time, it may not work as you may not have the xmda drivers installed. Look at `Using AWS XDMA in C/C++ application <https://github.com/aws/aws-fpga/tree/master/sdk/linux_kernel_drivers/xdma>`_ link for more details on XDMA driver.
+
+**Note:** usage of XDMA is not mandatory. AWS provides memory-mapped PCIe address space for direct communication between CPU and FPGA.
+
+For a complete description of the different CPU to FPGA communication options and various options available, please review `the Programmers' View <https://github.com/aws/aws-fpga/blob/master/hdk/docs/Programmer_View.md>`_.
