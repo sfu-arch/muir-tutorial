@@ -94,6 +94,46 @@ Here are the five custom logic modules instantiated by this top-level RTL,
 
 .. centered::  **Figure 3: Block diagram of CL_DRAM_PCIS_SLV**
 
-Now let’s take a closer look at the CL_DMA_PCIS_SLV module. As mentioned above, this module takes in three sets of inputs, the :coral:`sh_cl_dma_pcis_bus` AXI-4 interface, the :mediumblue:`ddr*_scrb_bus`, and :turquoise: `the ddr*_tst_cfg_bus`. The :coral:`sh_cl_dma_pcis_bus` AXI-4 interface signals first go through an “`AXI register slice <https://www.xilinx.com/support/documentation/ip_documentation/axi_interconnect/v2_1/pg059-axi-interconnect.pdf#page=5>`_” module (becomes :coral:`sh_cl_dma_pcis_q`) then feed into an AXI_CROSSBAR module. The AXI crossbar module can arbitrate and steer the request and response traffic between two incoming AXI-4 interfaces (connecting to master) and four outgoing AXI-4 interfaces (connecting to slave).
-In this example, only one incoming interface is used and is connected to :coral:`sh_cl_dma_pcis_q`; the other one is unused and tied-off. Each of the four outgoing interfaces (:coral:`lcl_cl_sh_ddr(a/b/d)_q` and :coral:`cl_sh_ddr_q`) is for access to one of the four DDR interfaces. Each of the four AXI-4 interfaces goes through one or two “AXI register slice” cores (namely, src_register_slice, dest_register_slice, and axi_register_slice) and then feeds into a CL_TST_SCRB module. Besides the AXI-4 interface input, each CL_TST_SCRB module receives a :turquoise:`ddr*_tst_cfg_bus` and a :mediumblue:`ddr*_scrb_bus`, that are pipelined using the lib_pipe modules. With these three inputs, the CL_TST_SCRB module outputs a AXI-4 master interface that eventually connects to the DDR modules.
+Now let’s take a closer look at the CL_DMA_PCIS_SLV module. As mentioned above, this module takes in three sets of inputs, the :coral:`sh_cl_dma_pcis_bus` AXI-4 interface, the :mediumblue:`ddr*_scrb_bus`, and :turquoise:`the ddr*_tst_cfg_bus`. The :coral:`sh_cl_dma_pcis_bus` AXI-4 interface signals first go through an “`AXI register slice <https://www.xilinx.com/support/documentation/ip_documentation/axi_interconnect/v2_1/pg059-axi-interconnect.pdf#page=5>`_” module (becomes :coral:`sh_cl_dma_pcis_q`) then feed into an AXI_CROSSBAR module. The AXI crossbar module can arbitrate and steer the request and response traffic between two incoming AXI-4 interfaces (connecting to master) and four outgoing AXI-4 interfaces (connecting to slave).
+In this example, only one incoming interface is used and is connected to :coral:`sh_cl_dma_pcis_q`; the other one is unused and tied-off. Each of the four outgoing interfaces (:coral:`lcl_cl_sh_ddr(a/b/d)_q` and :coral:`cl_sh_ddr_q`) is for access to one of the four DDR interfaces. Each of the four AXI-4 interfaces goes through one or two “AXI register slice” cores (namely, ``src_register_slice``, ``dest_register_slice``, and ``axi_register_slice``) and then feeds into a CL_TST_SCRB module. Besides the AXI-4 interface input, each CL_TST_SCRB module receives a :turquoise:`ddr*_tst_cfg_bus` and a :mediumblue:`ddr*_scrb_bus`, that are pipelined using the lib_pipe modules. With these three inputs, the CL_TST_SCRB module outputs a AXI-4 master interface that eventually connects to the DDR modules.
 
+
+.. thumbnail:: ../figures/CL_TST_SCRB.png
+    :width: 700px
+    :height: 150px
+    :align: center
+
+    Block diagram of CL_TST_SCRB
+
+.. centered::  **Figure 4: Block diagram of CL_TST_SCRB**
+
+
+
+
+Within the CL_TST_SCRB module, a MEM_SCRB module is instantiated to perform memory scrubbing [1]_. The MEM_SCRB module implements an FSM internally that starts when receiving the :mediumblue:`scrb_bus.enable` signal, and controls the :coral:`scrb_\*` AXI-4 master interface to write zeros to the address range from 0 to MAX_ADDR of DDR DRAM. The MEM_SCRB module also outputs the FSM state (:mediumblue:`scrb_bus.state`), scrubbing address (:mediumblue:`scrb_bus.addr`), and scrubbing completion status (:mediumblue:`scrb_bus.done`), which are eventually propagated to the top-level and connected to the cl_sh_status0 and cl_sh_id0/1 output ports (see Figure 2).
+Similarly, the CL_TST module performs auto testing for DDR DRAMs by controlling the atg_* AXI-4 master interface based on the cfg_bus input.
+
+Within the CL_TST_SCRB module, the third AXI-4 master interface (:coral:`slv_\*`) is connected to one of the AXI_CROSSBAR‘s four outgoing interfaces, which is initially driven by the :coral:`sh_cl_dma_pcis_bus` that comes from the Shell.
+
+The output :coral:`ddr_axi4` interface of the CL_TST_SCRB module is selected from the three AXI-4 interfaces based on the **scrb_enable** and **atg_enable** signals.
+
+.. [1] Memory scrubbing consists of reading from each computer memory location, correcting bit errors (if any) with an error-correcting code (ECC), and writing the corrected data back to the same location.
+
+Running the cl_dram_dma example
+--------------------------------
+
+To run the cl_dram_dma example, follow the same steps describe above to synthesize the HDL, upload the tarball to s3, switch to F1 instance, and program the FPGA.
+``cd`` into the cl_dram_dma example directory and try running it.
+
+.. code-block:: bash
+
+    cd $CL_DIR/software/runtime/(CL_DIR is hdk/cl/examples/cl_dram_dma)
+    make all
+    sudo ./test_dram_dma
+
+
+If you are running the dma example for the first time, it may not work as you may not have the xmda drivers installed. Look at `Using AWS XDMA in C/C++ application <https://github.com/aws/aws-fpga/tree/master/sdk/linux_kernel_drivers/xdma>`_ link for more details on XDMA driver.
+
+**Note:** usage of XDMA is not mandatory. AWS provides memory-mapped PCIe address space for direct communication between CPU and FPGA.
+
+For a complete description of the different CPU to FPGA communication options and various options available, please review `the Programmers' View <https://github.com/aws/aws-fpga/blob/master/hdk/docs/Programmer_View.md>`_.

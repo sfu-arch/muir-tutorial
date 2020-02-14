@@ -3,6 +3,30 @@
 Synthesizing the Example with Xilinx Vivado
 =============================================
 
+
+Install the HDK and setup environment
+----------------------------------------
+
+The AWS FPGA HDK can be cloned to your EC2 instance or server by executing:
+
+When using the developer AMI:  ``AWS_FPGA_REPO_DIR=/home/centos/src/project_data/aws-fpga``
+
+.. code-block::bash
+
+    git clone https://github.com/aws/aws-fpga.git $AWS_FPGA_REPO_DIR
+    cd $AWS_FPGA_REPO_DIR
+    source sdk_setup.sh
+    source hdk_setup.sh
+
+**Note:** that sourcing ``hdk_setup.sh`` will set required environment variables that are used throughout the examples in the HDK.  DDR simulation models and DCP(s) are downloaded from S3 during hdk setup.  New terminal or xterm requires `hdk_setup.sh` to be rerun. 
+
+
+How To Create an Amazon FPGA Image (AFI) From One of The CL Examples: Step-by-Step Guide
+------------------------------------------------------------------------------------------
+
+
+**Step 1. Pick cl_hello_world example and start in the example directory**
+
 Change into an example directory and se the CL_DIR environment variable to the path of the example. You will need to set this again if you change examples:
 
 .. code-block:: bash
@@ -10,26 +34,30 @@ Change into an example directory and se the CL_DIR environment variable to the p
     cd $HDK_DIR/cl/examples/cl_hello_world
     export CL_DIR=$(PWD)
 
-Verify if Vivado is installed.
+
+**Step 2. Build the CL**
+
+This `checklist <https://github.com/aws/aws-fpga/blob/master/hdk/cl/CHECKLIST_BEFORE_BUILDING_CL.md>`_ should be consulted before you start the build process.
+
+**Note:** This step requires you to have Xilinx Vivado Tools and Licenses installed
 
 .. code-block:: bash
 
     vivado -mode batch
 
-Run Vivado synthesis
-
+Run Vivado synthesis. Executing the aws_build_dcp_from_cl.sh script will perform the entire implementation process converting the CL design into a completed Design Checkpoint that meets timing and placement constrains of the target FPGA. The output is a tarball file comprising the DCP file, and other log/manifest files, formatted as YY_MM_DD-hhmm.Developer_CL.tar. This file would be submitted to AWS to create an AFI.
 .. code-block:: bash
 
     cd $CL_DIR/build/scripts
     ./aws_build-dcp_from_cl.sh
 
-Note that this can take a long time. If you want to be notified by email when synthesis is done, do this before running the synthesis:
+**Note:** that this can take a long time. If you want to be notified by email when synthesis is done, do this before running the synthesis:
 
 .. code-block:: bash
 
     pip2 install --user boto3
     export EMAIL=your.email@example.com
-    $HDK_COMMON_DIR/scripts/notify_via_sns.py
+    $AWS_FPGA_REPO_DIR/shared/bin/scripts/notify_via_sns.py
 
 For the email to work, you need to set your region name properly during "aws configure". We set our region name as "us-east-1".
 
@@ -47,11 +75,19 @@ By default, the build runs in the background, but it can be nice to be able to s
 
     ./aws_build_dcp_from_cl.sh -notify -foreground
 
-# Creating an Amazon FPGA Image (AFI)
+
+**Step 3. Submit the Design Checkpoint to AWS to Create the AFI**
 
 Now that synthesis is done, we need to create an Amazon FPGA Image (AFI) from the specified design checkpoint (DCP). The AFI contains the FPGA bitstream that will be programmed on the FPGA F1 instance.
 
-* To create an AFI, the DCP must be stored on S3. So we first need to create and s3 bucket. Make sure your credentials are set up correctly for this (aws configure).
+To submit the DCP, create an S3 bucket for submitting the design and upload the tarball file into that bucket. You need to prepare the following information:
+
+1. Name of the logic design (Optional).
+2. Generic description of the logic design (Optional).
+3. Location of the tarball file object in S3.
+4. Location of an S3 directory where AWS would write back logs of the AFI creation.
+
+To create an AFI, the DCP must be stored on S3. So we first need to create and s3 bucket. Make sure your credentials are set up correctly for this (aws configure).
 
 
 .. code-block:: bash
