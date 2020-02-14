@@ -18,7 +18,7 @@ In this set of documentations I have written my intuitions and engineering ideas
    Dandelion-Basics
    Initial-Setup/index
    Running-Simulations/index
-   RISCV-Accelerator/index
+   Chipyard-Accelerator/index
    AWS-Shell/index
 
 .. toctree::

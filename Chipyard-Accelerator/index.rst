@@ -1,7 +1,7 @@
 .. _riscv_shell:
 
-RISCV Extension
-================
+Chipyard Extension
+====================
 
 A quick tutorial on RocketChip integration with Dandelion.
 
@@ -17,6 +17,6 @@ In this guide, I will go over two examples:
 
 .. toctree::
    :maxdepth: 1
-   :caption: RISCV Integration:
+   :caption: Chipyard Integration:
 
-   RocketChip-Basics
+   Chipyard-Basics
