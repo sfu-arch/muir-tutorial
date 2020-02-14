@@ -82,3 +82,18 @@ Here are the five custom logic modules instantiated by this top-level RTL,
 3. The **CL_OCL_SLV** module implements the slave logic facing the :limegreen:`sh_ocl_bus` AXI-lite master and accordingly outputs six test config buses (:turquoise:`*_tst_cfg_bus`).
 4. The **CL_INT_SLV** module receives interrupt test config signals via :turquoise: `int_tst_cfg_bus` and demonstrates the interrupt request feature.
 5. The **CL_PCIM_MSTR** module receives PCIM test config signals via :turquoise:`pcim_tst_cfg_bus` and demonstrates the PCIM master interface for outbound PCIe transactions (CL to Shell).
+
+
+
+.. thumbnail:: ../figures/CL_DRAM_PCIS_SLV.png
+    :width: 700px
+    :height: 150px
+    :align: center
+
+    Block diagram of CL_DRAM_PCIS_SLV
+
+.. centered::  **Figure 3: Block diagram of CL_DRAM_PCIS_SLV**
+
+Now let’s take a closer look at the CL_DMA_PCIS_SLV module. As mentioned above, this module takes in three sets of inputs, the :coral:`sh_cl_dma_pcis_bus` AXI-4 interface, the :mediumblue:`ddr*_scrb_bus`, and :turquoise: `the ddr*_tst_cfg_bus`. The :coral:`sh_cl_dma_pcis_bus` AXI-4 interface signals first go through an “`AXI register slice <https://www.xilinx.com/support/documentation/ip_documentation/axi_interconnect/v2_1/pg059-axi-interconnect.pdf#page=5>`_” module (becomes :coral:`sh_cl_dma_pcis_q`) then feed into an AXI_CROSSBAR module. The AXI crossbar module can arbitrate and steer the request and response traffic between two incoming AXI-4 interfaces (connecting to master) and four outgoing AXI-4 interfaces (connecting to slave).
+In this example, only one incoming interface is used and is connected to :coral:`sh_cl_dma_pcis_q`; the other one is unused and tied-off. Each of the four outgoing interfaces (:coral:`lcl_cl_sh_ddr(a/b/d)_q` and :coral:`cl_sh_ddr_q`) is for access to one of the four DDR interfaces. Each of the four AXI-4 interfaces goes through one or two “AXI register slice” cores (namely, src_register_slice, dest_register_slice, and axi_register_slice) and then feeds into a CL_TST_SCRB module. Besides the AXI-4 interface input, each CL_TST_SCRB module receives a :turquoise:`ddr*_tst_cfg_bus` and a :mediumblue:`ddr*_scrb_bus`, that are pipelined using the lib_pipe modules. With these three inputs, the CL_TST_SCRB module outputs a AXI-4 master interface that eventually connects to the DDR modules.
+
