@@ -8,6 +8,8 @@ Welcome to Dandelion's documentation!
 
 New to Dandelion? Jump to the :ref:`dandelion-basics` page for more info.
 
+In this set of documentations I have written my intuitions and engineering ideas behind **Dandelion** project. All the documentations that exist in this project are not written only by me. Part of these documentations are gather from different sources or README files from projects that I used in the course of developing Dandelion. I have written these topics while I was learning and implementing them.
+
 .. toctree::
    :maxdepth: 3
    :caption: Getting Started:
@@ -16,6 +18,7 @@ New to Dandelion? Jump to the :ref:`dandelion-basics` page for more info.
    Dandelion-Basics
    Initial-Setup/index
    Running-Simulations/index
+   RISCV-Accelerator/index
    AWS-Shell/index
 
 .. toctree::
