@@ -226,23 +226,18 @@ As mentioned above, if this is the first time you’re trying an F1 instance wit
 Once the F1 instance is running, SSH into the instance
 ``cd`` into the cloned aws fpga git repo and run “source sdk_setup.sh”
 Run “aws configure” and input your credentials. If you’ve done this before, and your credentials haven’t changed, you don’t need to do it again.
-Make sure you clear any AFI you have previously loaded in your slot:
+
+You can now use the FPGA Management tools, from within your F1 instance, to load your AFI onto an FPGA on a specific slot. Make sure you clear any AFI you have previously loaded in your slot:
 
 .. code-block:: bash
 
-    sudo fpga-clear-locl-image -S 0
+    sudo fpga-clear-local-image -S 0
 
-Change your Instance Type to f1.2xlarge (this is the one with an FPGA) and start the instance. To change the instance type:  Right click on your instance shown in the  EC2 Management Console -> Click “Instance Settings” -> Change Instance Type -> Choose “f1.2xlarge”. To start the instance again, don’t click “Launch Instance” as this will create a new instance, but right-click on your instance, “Instance State”, then “Start”.
-As mentioned above, if this is the first time you’re trying an F1 instance with your AWS account, you may need to request an instance limit increase.
-
-Once the F1 instance is running, SSH into the instance
-CD into the cloned aws fpga git repo and run “source sdk_setup.sh”
-Run “aws configure” and input your credentials. If you’ve done this before, and your credentials haven’t changed, you don’t need to do it again.
-Make sure you clear any AFI you have previously loaded in your slot:
+You can also invoke the ``fpga-describe-local-image`` command to learn about which AFI, if any, is loaded onto a particular slot. For example, if the slot is cleared (slot 0 in this example), you should get an output similar to the following:
 
 ::
 
-    $sudo fpga-describe-local-image -S 0 -H
+    $ sudo fpga-describe-local-image -S 0 -H
  
     Type  FpgaImageSlot  FpgaImageId     StatusName    StatusCode   ErrorName    ErrorCode     ShVersion
     AFI        0            none          cleared          1           ok            0      <shell_version>
@@ -252,9 +247,13 @@ Make sure you clear any AFI you have previously loaded in your slot:
 
 If the describe returns a status ‘Busy’, the FPGA is still performing the previous operation in the background. Please wait until the status is ‘Cleared’ as above.
 
+Now, let us try loading your AFI to FPGA ``slot 0``:
+
 .. code-block:: bash
 
     sudo fpga-load-local-image -S 0 -I <FpgaImageGlobalId>
+
+**NOTE:** The FPGA Management tools use the AGFI ID (not the AFI ID).
 
 <FpgaImageGlobalId> is the ID that you got before when running “aws ec2 create-fpga-image ..” and starts with agfi-….
 
@@ -270,82 +269,15 @@ Verify that the AFI was loaded properly. The output shows the FPGA in the “loa
     AFIDEVICE        0           0x6789      0x1d50     0000:00:0f.0
 
 
-Now validate the example. Each CL Example comes with a runtime software under $CL_DIR/software/runtime/ subdirectory. You will need to build the runtime application that matches your loaded AFI.
+Now validate the example. Each CL Example comes with a runtime software under ``$CL_DIR/software/runtime/`` subdirectory. You will need to build the runtime application that matches your loaded AFI.
 
 .. code-block:: bash
 
-    cd $CL_DIR/software/runtime/ #CL_DIR is hdk/cl/examples/cl_hello_world
-    make all
-    sudo ./test_hello_world
-
-The cl_hello_world example should show the following output:
-
-::
-
-    AFI PCI  Vendor ID: 0x1d0f, Device ID 0xf000
-    ===== Starting with peek_poke_example =====
-    register: 0xdeadbeef
-    Resulting value matched expected value 0xdeadbeef. It worked!
-    Developers are encouraged to modify the Virtual DIP Switch by calling the linux shell command to demonstrate how AWS FPGA Virtual DIP switches can be used to change a CustomLogic functionality:
-    $ fpga-set-virtual-dip-switch -S (slot-id) -D (16 digit setting)
-    In this example, setting a virtual DIP switch to zero clears the corresponding LED, even if the peek-poke example would set it to 1.
-    For instance:
-    # fpga-set-virtual-dip-switch -S 0 -D 1111111111111111
-    # fpga-get-virtual-led  -S 0
-    FPGA slot id 0 have the following Virtual LED:
-    1010-1101-1101-1110
-    # fpga-set-virtual-dip-switch -S 0 -D 0000000000000000
-    # fpga-get-virtual-led  -S 0
-    FPGA slot id 0 have the following Virtual LED:
-    0000-0000-0000-0000
-
-As suggested in the output, try changing the Virtual DIP switches:
-
-
-.. code-block:: bash
-
-    sudo fpga-set-virtual-dip-switch -S 0 -D 1111111111111111
-    sudo fpga-get-virtual-led  -S 0
-    
-    FPGA slot id 0 have the following Virtual LED:
-    1010-1101-1101-1110
-    
-    sudo fpga-set-virtual-dip-switch -S 0 -D 0000000000000000
-    sudo fpga-get-virtual-led  -S 0
-    
-    FPGA slot id 0 have the following Virtual LED:
-    0000-0000-0000-0000
-    
-    sudo fpga-set-virtual-dip-switch -S 0 -D 0000000011111111
-    sudo fpga-get-virtual-led  -S 0
-    
-    FPGA slot id 0 have the following Virtual LED:
-    0000-0000-1101-1110
-    
-    sudo fpga-set-virtual-dip-switch -S 0 -D 1111111100000000
-    sudo fpga-get-virtual-led  -S 0
-    
-    FPGA slot id 0 have the following Virtual LED:
-    1010-1101-0000-0000
-
-Congratulations! You have successfully run your first examples on the EC2 F1!
-
-
-Running the cl_dram_dma example
---------------------------------
-
-To run the cl_dram_dma example, follow the same steps describe above to synthesize the HDL, upload the tarball to s3, switch to F1 instance, and program the FPGA.
-``cd`` into the cl_dram_dma example directory and try running it.
-
-.. code-block:: bash
-
-    cd $CL_DIR/software/runtime/(CL_DIR is hdk/cl/examples/cl_dram_dma)
+    cd $CL_DIR/software/runtime/
     make all
     sudo ./test_dram_dma
 
-
 If you are running the dma example for the first time, it may not work as you may not have the xmda drivers installed. Look at `Using AWS XDMA in C/C++ application <https://github.com/aws/aws-fpga/tree/master/sdk/linux_kernel_drivers/xdma>`_ link for more details on XDMA driver.
-
-**Note:** usage of XDMA is not mandatory. AWS provides memory-mapped PCIe address space for direct communication between CPU and FPGA.
+Developers using AMI 1.5.0 or Later Instances that come with pre-installed Xilinx Runtime Environment (XRT) should `refer to this note <https://github.com/aws/aws-fpga/blob/master/sdk/linux_kernel_drivers/xdma/xdma_install.md#xdmainstallfail>`_ before installing XDMA driver.
 
 For a complete description of the different CPU to FPGA communication options and various options available, please review `the Programmers' View <https://github.com/aws/aws-fpga/blob/master/hdk/docs/Programmer_View.md>`_.
