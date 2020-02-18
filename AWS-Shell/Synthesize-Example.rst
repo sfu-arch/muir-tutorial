@@ -155,35 +155,26 @@ Now copy the output files from synthesis to the new s3 bucket.
         ]
     }
 
-* Verify that the bucket policy grants the required permissions by running the following script:
-
-
-.. code-block:: bash
-
-    check_s3_bucket_policy.py --dcp-bucket <bucket-name> --dcp-key <dcp-folder-name>/<tar-file-name> --logs-bucket <bucket-name> --logs-key <logs-folder-name>
-
-* Once your policy passes the checks, create the Amazon FPGA image (AFI).
-
+* Remember to change ``<bucket-name>``, ``<dcp-folder-name>`` and ``<logs-folder-name>`` in the policy text. Then, start AFI creation.
 
 .. code-block:: bash
 
-    aws ec2 create-fpga-image --name <afi-name> --description <afi-description> --input-storage-location Bucket=<dcp-bucket-name>,Key=<path-to-tarball> --logs-storage-location Bucket=<logs-bucket-name>,Key=<path-to-logs>      
+    aws ec2 create-fpga-image --name <afi-name> \
+    --description <afi-description> \
+    --input-storage-location Bucket=<dcp-bucket-name>,Key=<path-to-tarball> \
+    --logs-storage-location Bucket=<logs-bucket-name>,Key=<path-to-logs>
 
-<path-to-tarball> is <dcp-folder-name>/<tar-file-name>
-
-<path-to-logs> is <logs-folder-name>
+    NOTE: 
+        <path-to-tarball> is <dcp-folder-name>/<tar-file-name>
+        <path-to-logs> is <logs-folder-name>
 
 The output of this command includes two identifiers that refer to your AFI: Write these down, as you will need them later.
 
-* **FPGA Image Identifier** or **AFI ID**: this is the main ID used to manage your AFI through the AWS EC2 CLI commands and AWS SDK APIs.
+* **FPGA Image Identifier** or **AFI ID**: this is the main ID used to manage your AFI through the AWS EC2 CLI commands and AWS SDK APIs. This ID is regional, i.e., if an AFI is copied across multiple regions, it will have a different unique AFI ID in each region.  An example AFI ID is ``afi-06d0ffc989feeea2a``.
 
-This ID is regional, i.e., if an AFI is copied across multiple regions, it will have a different unique AFI ID in each region.  An example AFI ID is **`afi-06d0ffc989feeea2a`**.
+* **Glogal FPGA Image Identifier** or **AGFI ID**: this is a global ID that is used to refer to an AFI from within an F1 instance. For example, to load or clear an AFI from an FPGA slot, you use the AGFI ID. Since the AGFI IDs is global (by design), it allows you to copy a combination of AFI/AMI to multiple regions, and they will work without requiring any extra setup. An example AGFI ID is ``agfi-0f0e045f919413242``.
 
-* **Glogal FPGA Image Identifier** or **AGFI ID**: this is a global ID that is used to refer to an AFI from within an F1 instance. For example, to load or clear an AFI from an FPGA slot, you use the AGFI ID.
-
-Since the AGFI IDs is global (by design), it allows you to copy a combination of AFI/AMI to multiple regions, and they will work without requiring any extra setup. An example AGFI ID is **`agfi-0f0e045f919413242`**.
-
-* Check if the AFI generation is done. You must provide the **FPGA Image Identifier** returned by `create-fpga-image`:
+Check if the AFI generation is done. You must provide the **FPGA Image Identifier** returned by `create-fpga-image`:
 
 
 .. code-block:: bash
@@ -191,6 +182,9 @@ Since the AGFI IDs is global (by design), it allows you to copy a combination of
     aws ec2 describe-fpga-images --fpga-image-ids <AFI ID>
 
 The AFI can only be loaded to an instance once the AFI generation completes and the AFI state is set to `available`. This can also take some time (Took ~30 minutes for the cl_dram_dma example).
+You can use the `wait_for_afi.py <https://github.com/aws/aws-fpga/blob/master/hdk/docs/wait_for_afi.md>`_ script to wait for the AFI creation to complete and then optionally send an email with the results.
+
+The AFI can only be loaded to an instance once the AFI generation completes and the AFI state is set to ``available``:
 
 ::
 
@@ -222,6 +216,8 @@ The AFI can only be loaded to an instance once the AFI generation completes and 
 
 Running the Example on an Amazon EC2 F1 Instance
 -------------------------------------------------
+
+To follow the next steps, you have to launch an F1 instance. AWS recommends that you launch an instance with latest Amazon Linux that has the FPGA Management tools included, or alternatively the FPGA Developer AMI with both the HDK and SDK.
 
 Change your Instance Type to f1.2xlarge (this is the one with an FPGA) and start the instance.
 To change the instance type:  Right click on your instance shown in the EC2 Management Console -> Click “Instance Settings” -> Change Instance Type -> Choose “f1.2xlarge”. To start the instance again, don’t click “Launch Instance” as this will create a new instance, but right-click on your instance, “Instance State”, then “Start”.
