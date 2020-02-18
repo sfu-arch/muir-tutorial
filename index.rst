@@ -16,6 +16,7 @@ In this set of documentations I have written my intuitions and engineering ideas
    :numbered:
 
    Dandelion-Basics
+   Dandelion-Architecture/index
    Initial-Setup/index
    Running-Simulations/index
    Chipyard-Accelerator/index

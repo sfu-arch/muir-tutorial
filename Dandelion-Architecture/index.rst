@@ -14,3 +14,5 @@ Introduction
    :caption: Dandelion System Design:
 
    Dandelion-Basics
+   DCR
+
