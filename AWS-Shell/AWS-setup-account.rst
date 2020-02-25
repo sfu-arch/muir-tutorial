@@ -262,5 +262,6 @@ In either case, ``ssh`` into your instance (e.g. ``ssh -i aws-dandelion.pem cent
 Once this line appears, exit and re-``ssh`` into the system. If you want
 to use ``mosh``, ``mosh`` back into the system.
 
+Now we are ready to start developing our custom logic designs on AWS F1 instances!
 
-.. [1] Part of this tutorial is taken from `FireSim doc <https://docs.fires.im/en/latest/index.html>`_.
+.. [1] This tutorial is adopted from `FireSim doc <https://docs.fires.im/en/latest/index.html>`_.

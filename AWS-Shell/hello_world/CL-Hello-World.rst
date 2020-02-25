@@ -14,7 +14,9 @@ Custom Logic RTL
 -----------------
 
 This simple *hello_world* example builds a Custom Logic (CL) that will enable the instance to "peek" and "poke" registers in the Custom Logic (CL).
-These registers will be in the memory space behind AppPF BAR0, which is the ocl\_cl\_ AXI-lite bus on the Shell to CL interface.
+These registers will be in the memory space behind AppPF BAR0, which is the ocl\_cl\_AXI-lite bus on the Shell to CL interface.
+
+In this page, `AWS Shell Interface Specification <https://github.com/aws/aws-fpga/blob/master/hdk/docs/AWS_Shell_Interface_Specification.md#axi_lite_interfaces_for_register_access>`_, you will find more details about AWS shell and memory interfaces. 
 
 This example demonstrate a basic use-case of the Virtual LED and Virtual DIP switches.
 
@@ -65,6 +67,7 @@ First you will see the above module declaration uses a `include "cl_ports.vh"` s
 Users should tie-off all unused interfaces, by including a list of AWS-provided Verilog files located at
 ``aws-fpga/hdk/common/shell_v04261818/design/interfaces/unused_*_template.inc``
 
+In case you want to import another module defined in an external Verilog or SystemVerilog files, this is where you also include the files.
 
 Then you will see the standard PCIe and PCIe subsystem ID settings, and an always block synchronizing the input reset signal, rst_main_n.
 
