@@ -17,6 +17,7 @@ Hit next to get started!
    :maxdepth: 2
    :caption: Running Dandelion Simulations:
 
+   MuIR-Sim
    Running-a-verilator
    Running-a-vcs
 
