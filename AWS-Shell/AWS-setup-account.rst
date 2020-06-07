@@ -222,7 +222,7 @@ To launch a manager instance, follow these steps:
    3. Also on this page, expand "Advanced Details" and in the resulting
       text box, paste the following:
 
-      .. include:: /../scripts/machine-launch-script.sh
+      .. include:: ../scripts/machine-launch-script.sh
          :code: bash
 
       This will pre-install all of the dependencies needed to run Dandelion on your instance.
